@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>ClassFlow - Painel do Administrador</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f8fa;
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      margin: auto;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #00b26f;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .erro {
+      color: red;
+      font-size: 14px;
+    }
+    .sucesso {
+      color: green;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Painel do Administrador</h1>
+    <p>Bem-vindo, <strong>jv_rezende_</strong></p>
+
+    <h3>Cadastrar novo administrador</h3>
+    <input id="novoAdmUsuario" placeholder="Novo usuário admin" />
+    <input id="novoAdmSenha" type="password" placeholder="Senha do admin" />
+    <button onclick="cadastrarAdm()">Cadastrar administrador</button>
+    <div id="mensagem"></div>
+  </div>
+
+  <script>
+    function cadastrarAdm() {
+      const usuario = document.getElementById('novoAdmUsuario').value.trim();
+      const senha = document.getElementById('novoAdmSenha').value.trim();
+      const msg = document.getElementById('mensagem');
+
+      if (!usuario || !senha) {
+        msg.innerHTML = '<p class="erro">Preencha todos os campos.</p>';
+        return;
+      }
+
+      if (localStorage.getItem("usuario_" + usuario) || localStorage.getItem("admin_" + usuario)) {
+        msg.innerHTML = '<p class="erro">Usuário já existe.</p>';
+        return;
+      }
+
+      localStorage.setItem("admin_" + usuario, senha);
+      msg.innerHTML = '<p class="sucesso">Administrador cadastrado com sucesso!</p>';
+    }
+  </script>
+</body>
+</html>
