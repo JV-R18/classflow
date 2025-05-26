@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>ClassFlow 2.0 - Com Administrador</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; }
+    header { background: #2563eb; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-weight: bold; font-size: 1.3rem; }
+    .menu span { margin-right: 1rem; }
+    .container { max-width: 1000px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 8px; }
+    .hidden { display: none; }
+    input, button { display: block; width: 100%; margin: 0.5rem 0; padding: 0.6rem; border: 1px solid #ccc; border-radius: 5px; }
+    button { background: #2563eb; color: white; font-weight: bold; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #ccc; text-align: center; padding: 0.5rem; }
+    td.disponivel { background: #d1fae5; }
+    td.ocupado { background: #fecaca; }
+    a { color: #2563eb; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">ClassFlow</div>
+  <div class="menu">
+    <span id="usuarioTopo"></span>
+    <button onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<div class="container">
+  <div id="login">
+    <h2>Login</h2>
+    <input type="text" id="usuario" placeholder="Usuário" />
+    <input type="password" id="senha" placeholder="Senha" />
+    <button onclick="login()">Entrar</button>
+    <p id="erroLogin" style="color:red;"></p>
+    <p>Não tem conta? <a onclick="mostrarCadastro()">Cadastre-se</a></p>
+  </div>
+
+  <div id="cadastro" class="hidden">
+    <h2>Cadastro</h2>
+    <input type="text" id="nome" placeholder="Nome completo" />
+    <input type="text" id="materia" placeholder="Matéria" />
+    <input type="text" id="turno" placeholder="Turno" />
+    <input type="text" id="usuarioNovo" placeholder="Usuário" />
+    <input type="password" id="senhaNova" placeholder="Senha" />
+    <label><input type="checkbox" id="tipoAdmin" /> Conta de Administrador</label>
+    <button onclick="cadastrar()">Cadastrar</button>
+    <p><a onclick="mostrarLogin()">Voltar ao login</a></p>
+    <p id="msgCadastro" style="color:green;"></p>
+  </div>
+
+  <div id="painel" class="hidden">
+    <h2 id="painelTitulo"></h2>
+    <div id="gradeContainer"></div>
+  </div>
+</div>
+
+<script>
+const dias = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
+const horas = ["07h","08h","09h","10h","11h","12h","13h","14h","15h","16h","17h","18h","19h","20h","21h"];
+let professores = JSON.parse(localStorage.getItem("professores") || "[]");
+let disponibilidade = JSON.parse(localStorage.getItem("disponibilidade") || "{}");
+let usuarioLogado = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
+
+function salvar() {
+  localStorage.setItem("professores", JSON.stringify(professores));
+  localStorage.setItem("disponibilidade", JSON.stringify(disponibilidade));
+  localStorage.setItem("usuarioLogado", JSON.stringify(usuarioLogado));
+}
+
+function login() {
+  const u = document.getElementById("usuario").value.trim().toLowerCase();
+  const s = document.getElementById("senha").value;
+  const prof = professores.find(p => p.usuario === u && p.senha === s);
+  if (prof) {
+    usuarioLogado = prof;
+    salvar();
+    entrarPainel();
+  } else {
+    document.getElementById("erroLogin").innerText = "Usuário ou senha inválidos.";
+  }
+}
+
+function cadastrar() {
+  const novo = {
+    id: Date.now(),
+    nome: document.getElementById("nome").value,
+    materia: document.getElementById("materia").value,
+    turno: document.getElementById("turno").value,
+    usuario: document.getElementById("usuarioNovo").value.trim().toLowerCase(),
+    senha: document.getElementById("senhaNova").value,
+    tipo: (document.getElementById("tipoAdmin").checked && usuarioLogado && usuarioLogado.usuario === "jv_rezende_") ? "admin" : "professor"
+  };
+  if (professores.find(p => p.usuario === novo.usuario)) {
+    document.getElementById("msgCadastro").style.color = "red";
+    document.getElementById("msgCadastro").innerText = "Usuário já existe!";
+    return;
+  }
+  professores.push(novo);
+  salvar();
+  document.getElementById("msgCadastro").style.color = "green";
+  
+    if (document.getElementById("tipoAdmin").checked && (!usuarioLogado || usuarioLogado.usuario !== "jv_rezende_")) {
+      document.getElementById("msgCadastro").style.color = "red";
+      document.getElementById("msgCadastro").innerText = "Apenas 'jv_rezende_' pode criar contas de administrador.";
+      return;
+    }
+    document.getElementById("msgCadastro").style.color = "green";
+    document.getElementById("msgCadastro").innerText = "Cadastro realizado!";
+    
+  setTimeout(() => mostrarLogin(), 1000);
+}
+
+function mostrarLogin() {
+  document.getElementById("login").classList.remove("hidden");
+  document.getElementById("cadastro").classList.add("hidden");
+  document.getElementById("painel").classList.add("hidden");
+}
+
+function mostrarCadastro() {
+  document.getElementById("cadastro").classList.remove("hidden");
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("painel").classList.add("hidden");
+}
+
+function entrarPainel() {
+  document.getElementById("painel").classList.remove("hidden");
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("cadastro").classList.add("hidden");
+  document.getElementById("usuarioTopo").innerText = "👤 " + usuarioLogado.nome;
+  if (usuarioLogado.tipo === "admin") {
+    document.getElementById("painelTitulo").innerText = "Painel do Administrador";
+    montarGradeAdmin();
+  } else {
+    document.getElementById("painelTitulo").innerText = "Minha Disponibilidade";
+    montarGradeProfessor(usuarioLogado.usuario);
+  }
+}
+
+function logout() {
+  usuarioLogado = null;
+  localStorage.removeItem("usuarioLogado");
+  mostrarLogin();
+}
+
+function montarGradeProfessor(uid) {
+  if (!disponibilidade[uid]) disponibilidade[uid] = {};
+  let html = "<table><tr><th>Hora</th>" + dias.map(d => `<th>${d}</th>`).join("") + "</tr>";
+  for (let h of horas) {
+    html += `<tr><th>${h}</th>`;
+    for (let d of dias) {
+      const key = d + "_" + h;
+      const status = disponibilidade[uid][key] || "livre";
+      html += `<td class="${status === 'ocupado' ? 'ocupado' : 'disponivel'}" onclick="alternar('${uid}','${key}')">${status === 'ocupado' ? '❌' : '✅'}</td>`;
+    }
+    html += "</tr>";
+  }
+  html += "</table>";
+  document.getElementById("gradeContainer").innerHTML = html;
+}
+
+function montarGradeAdmin() {
+  let html = "";
+  for (let prof of professores.filter(p => p.tipo !== 'admin')) {
+    html += `<h3>${prof.nome} - ${prof.materia}</h3>`;
+    const uid = prof.usuario;
+    if (!disponibilidade[uid]) disponibilidade[uid] = {};
+    html += "<table><tr><th>Hora</th>" + dias.map(d => `<th>${d}</th>`).join("") + "</tr>";
+    for (let h of horas) {
+      html += `<tr><th>${h}</th>`;
+      for (let d of dias) {
+        const key = d + "_" + h;
+        const status = disponibilidade[uid][key] || "livre";
+        html += `<td class="${status === 'ocupado' ? 'ocupado' : 'disponivel'}">${status === 'ocupado' ? '❌' : '✅'}</td>`;
+      }
+      html += "</tr>";
+    }
+    html += "</table><br/>";
+  }
+  document.getElementById("gradeContainer").innerHTML = html;
+}
+
+function alternar(uid, key) {
+  disponibilidade[uid][key] = disponibilidade[uid][key] === "ocupado" ? "livre" : "ocupado";
+  salvar();
+  montarGradeProfessor(uid);
+}
+
+if (usuarioLogado) entrarPainel();
+</script>
+
+</body>
+</html>
