@@ -1,0 +1,102 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClassFlow - Login</title>
+  <link rel="icon" href="logo_classflow.png" type="image/png"/>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f6fb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    header img {
+      height: 50px;
+      margin-right: 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #00b26f;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .erro {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo_classflow.png" alt="ClassFlow Logo">
+    <h2>ClassFlow</h2>
+  </header>
+  <div class="card">
+    <h3>Portal do Professor</h3>
+    <input id="usuario" placeholder="Usuário"/>
+    <input id="senha" type="password" placeholder="Senha"/>
+    <button onclick="entrar()">Acessar</button>
+    <a href="cadastro.html" style="display:block;margin-top:14px;font-size:15px;color:#007bff;text-decoration:none;">
+      Criar nova conta
+    </a>
+    <div id="erro" class="erro"></div>
+  </div>
+
+  <script>
+    function entrar() {
+      const user = document.getElementById('usuario').value.trim();
+      const senha = document.getElementById('senha').value;
+
+      const admin = { usuario: "jv_rezende_", senha: "adm1234" };
+
+      if (!user || !senha) {
+        document.getElementById('erro').innerText = "Preencha todos os campos.";
+        return;
+      }
+
+      if (user === admin.usuario && senha === admin.senha) {
+        window.location.href = "./admin.html"; // substituir por página real depois
+      } else {
+        document.getElementById('erro').innerText = "Usuário ou senha inválidos.";
+      }
+    }
+  </script>
+</body>
+</html>
