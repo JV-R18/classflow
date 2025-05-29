@@ -1,1 +1,25 @@
-<!-- HTML de login -->
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClassFlow - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <img src="logo_classflow.png" alt="ClassFlow Logo" class="logo" />
+    <h1>ClassFlow</h1>
+    <div class="card">
+      <h2>Portal do Professor</h2>
+      <input type="text" id="usuario" placeholder="Usuário" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button onclick="login()">Acessar</button>
+      <p id="erro" class="erro"></p>
+      <a href="cadastro.html" class="link">Criar nova conta</a>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
