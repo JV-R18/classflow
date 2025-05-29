@@ -1,1 +1,22 @@
-<!-- HTML de cadastro -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClassFlow - Cadastro</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <img src="logo_classflow.png" alt="ClassFlow Logo" class="logo" />
+    <h1>Cadastro</h1>
+    <div class="card">
+      <input type="text" id="novoUsuario" placeholder="Novo usuário" />
+      <input type="password" id="novaSenha" placeholder="Nova senha" />
+      <button onclick="cadastrar()">Cadastrar</button>
+      <p id="mensagemCadastro" class="mensagem"></p>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
